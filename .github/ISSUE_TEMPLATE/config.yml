@@ -1,0 +1,18 @@
+# Blank issues are disabled so every report arrives through a structured form.
+# The contact links exist mainly to route two kinds of traffic out of this
+# queue before it is filed: general Mo-Search reports (separate repository, one
+# shared installer) and anything private or security-related.
+blank_issues_enabled: false
+contact_links:
+  - name: Mo-Search issue (search, indexing, viewer, installer)
+    url: https://github.com/Meauxsoft/mo-search/issues/new/choose
+    about: If the problem is in Mo-Search itself — indexing, ranking, the viewer, or the installer — file it in the Mo-Search tracker.
+  - name: Troubleshooting first
+    url: https://github.com/Meauxsoft/mocontext/blob/main/docs/troubleshooting.md
+    about: Connection failures, empty results, stale snippets, and degraded health usually have an answer here.
+  - name: Security report
+    url: https://github.com/Meauxsoft/mocontext/blob/main/SECURITY.md
+    about: Do not open a public issue for a suspected vulnerability. Email Questions@meauxsoft.com with the subject [Security] MoContext.
+  - name: Private, licensing, or purchase question
+    url: mailto:Questions@meauxsoft.com
+    about: Licensing, sensitive diagnostics, and anything that should not be posted publicly.

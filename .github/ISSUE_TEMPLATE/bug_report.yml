@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible MoContext problem
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem. Do not paste private file contents,
+        tokens, personal paths, or session identifiers. Security reports belong
+        at Questions@meauxsoft.com with subject `[Security] MoContext`.
+  - type: input
+    id: version
+    attributes:
+      label: Mo-Search / MoContext version
+      placeholder: "For example: 9.50.8"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: AI client and version
+      description: Enter "REST only" if no MCP client is involved.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest safe, repeatable example.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed private content, tokens, personal paths, and session identifiers.
+          required: true
