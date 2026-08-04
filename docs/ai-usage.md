@@ -146,7 +146,7 @@ Use `get_evidence_pack`. This is the primary retrieval tool - call it whenever y
 **Interpreting the response:**
 - **`files_truncated: true`** - more files matched than returned. Narrow with `path_filter` or fewer terms.
 - **`lines_truncated: true`** - line budget hit. Reduce `max_files`, increase `context_lines`.
-- **`content_unavailable: "path_only"`** - file is indexed by path only (e.g. `.iss`, `.rc`). You get path and hit count but no snippets.
+- **`content_unavailable: "path_only"`** - file is indexed by path only (media and other non-text formats). You get path and hit count but no snippets.
 - **`content_unavailable: "unsupported_loader"`** - binary format (PDF, DOCX). Same.
 - **`ranking.ai_score`** - hit density weighted by recency. Higher = more relevant.
 - **`ranking.effective_loader`** - `0` = path-only, `100` = full-text indexed.
@@ -348,10 +348,10 @@ You can request fewer than the defaults but not more.
 ## Limitations
 
 - Cannot read PDF, DOCX, XLS, or other binary formats - returns `content_unavailable: "unsupported_loader"`.
-- Cannot read certain script formats (`.iss`, `.rc`) that MoSearch indexes by path only - returns `content_unavailable: "path_only"`.
+- Certain file formats are indexed by path only - returns `content_unavailable: "path_only"`.
 - No semantic / embedding-based search - retrieval is keyword/phrase/AND against the MoSearch word index.
 - Tokenizer splits on dots - `MoContext.Server.exe` is three words. Use `keyword` mode for dotted identifiers.
-- Cannot search files never indexed by MoSearch.
+- May only search files indexed by MoSearch.
 - `LoadContext <keyword>` depends on MoSearch indexing the digest Markdown; immediately saved or hand-edited digests may need a brief AutoIndexer moment before keyword search sees them.
 - `LoadContext` responses may be truncated by `max_chars`; use omitted counts to decide whether to narrow by keyword or fetch a specific digest by id.
 - `find_files` working-set mode and the default `LoadContext` working set expose index-event metadata, not semantic importance.
