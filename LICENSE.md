@@ -30,3 +30,18 @@ distributed with Mo-Search and is currently included at no additional charge.
 Their use is governed by the software license supplied with the product; see
 [meauxsoft.com](https://www.meauxsoft.com) for current availability, pricing,
 and terms.
+
+## Third-party notice
+
+The proprietary MoContext software includes the EFF Large Wordlist for
+Passphrases, created by the Electronic Frontier Foundation (EFF; Joseph
+Bonneau), used under the [Creative Commons Attribution 3.0 United States
+License (CC BY 3.0 US)](https://creativecommons.org/licenses/by/3.0/us/).
+
+Original source:
+
+- [EFF passphrase wordlists](https://www.eff.org/dice)
+- [EFF Large Wordlist](https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt)
+
+This notice concerns excluded software material and does not change the
+Creative Commons license for the documentation in this repository.

@@ -1,8 +1,15 @@
-# MoContext release history
+﻿# MoContext release history
 
-MoContext ships inside the Mo-Search installer and follows its release cycle, so these version numbers are Mo-Search versions. Only MoContext changes are listed; see the [Mo-Search changelog](https://github.com/Meauxsoft/mo-search/blob/main/CHANGELOG.md) for everything else. Documented through **9.50.8**.
+MoContext ships inside the Mo-Search installer and follows its release cycle, so these version numbers are Mo-Search versions. Only MoContext changes are listed; see the [Mo-Search changelog](https://github.com/Meauxsoft/mo-search/blob/main/CHANGELOG.md) for everything else. Documented through **26.0**.
 
 Generated from the Meauxsoft release history by `build-changelog.ps1`. Do not edit by hand.
+
+## 26.0 — 2026, Sep 21
+
+_A 40-day trial, a $50 license, and MoContext on this PC_
+
+- MoContext: Ships with Mo-Search as the local MCP server. Compatible AI clients search and read from the Mo-Search index on this PC; nothing is uploaded.
+- MoContext: Settings backup/restore, daily auto-backup, and a first-run choice to Restore or Start fresh. Default backup folder is Documents\MoBackups.
 
 ## 9.50.8 — 2026, Jul 17
 

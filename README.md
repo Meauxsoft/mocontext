@@ -1,6 +1,6 @@
 # MoContext
 
-> Documentation baseline: Mo-Search/MoContext 9.50.8, the current public
+> Documentation baseline: Mo-Search/MoContext 26.0, the current public
 > release.
 
 **Give your AI agent full-text search over the files you index on your Windows
@@ -14,10 +14,10 @@ MCP tools so Codex, Claude Code, Cursor, Windsurf, VS Code, or another
 compatible MCP client can find and read indexed files — plus keep durable,
 human-editable session memory.
 
-![MoContext local service monitor in dark mode](media/mocontext-dark.png)
+![MoContext 26.0 local context server](media/mocontext-dark.png)
 
-The screenshot above is the current background-service monitor. A workflow GIF
-and the fuller user-mode interface are planned for a later release.
+The screenshot above is the MoContext 26.0 local context server. A workflow GIF
+is planned for a later release.
 
 ## Why
 
@@ -187,7 +187,9 @@ client/model stack that runs locally. See [PRIVACY.md](PRIVACY.md).
 The documentation in this repository is licensed [CC BY 4.0](LICENSE.md).
 Mo-Search and MoContext are proprietary software. MoContext is currently
 included with Mo-Search at no additional charge; see the current product page
-and [LICENSE.md](LICENSE.md) for availability and terms.
+and [LICENSE.md](LICENSE.md) for availability and terms. The Mo-Search license
+is $50 for 365 days. MoVault is coming soon and is not a download from this
+repository.
 
 ---
 

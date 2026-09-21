@@ -182,6 +182,12 @@ Use `read_file`. One tool, three addressing forms:
 - **`path` + `start_line`/`end_line`** - an arbitrary line range.
 - **`path` + `line`** (with optional `before`/`after` context radii) - a focused window around one line. Best for follow-up drilling after evidence-pack identifies a region.
 
+For a direct path read, MoContext resolves the final filesystem target and accepts only a readable text file already represented by the MoSearch index. `AllowedRoots`, when configured, narrows that corpus; it never authorizes arbitrary files. Scoped `read_context_file` reads remain limited to the listed `root`, `memory`, and `sys` Markdown/text/HTML documents. Direct reads are capped at 8 MiB and 32,767 path characters.
+
+Search input is also bounded: query text is at most 4,096 characters / 64 searchable tokens, and each path, filename, or working-directory filter is at most 1,024 characters. Keep requests focused instead of sending bulk text.
+
+When the operator configures `AuthToken`, send `Authorization: Bearer <token>` for every non-public `/v1` route and for the full `/mcp` transport. `/v1/health`, `/v1/ui-version`, static UI assets, and MCP OAuth discovery remain public. Shutdown is disabled until a token is explicitly configured.
+
 ---
 
 ## Workflow 4 - Recording Continuity Notes
