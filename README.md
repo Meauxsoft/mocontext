@@ -1,27 +1,27 @@
 # MoContext
 
-> Documentation baseline: Mo-Search/MoContext 26.0, the current public
+> Documentation baseline: Mo-Search/MoContext 26.1, the current public
 > release.
 
 **Give your AI agent full-text search over the files you index on your Windows
 computer.**
 
-MoContext is a local [MCP](https://modelcontextprotocol.io) server that exposes
-the [Mo-Search](https://www.meauxsoft.com) desktop search index to AI agents.
+MoContext is a local [MCP](https://modelcontextprotocol.io) server that shares
+the [Mo-Search](https://www.meauxsoft.com) desktop search index with AI agents.
 Mo-Search has been indexing Windows machines since 2005 — millions of files,
 full text, ranked results in milliseconds. MoContext puts that index behind 15
-MCP tools so Codex, Claude Code, Cursor, Windsurf, VS Code, or another
+MCP tools so Codex, Claude Code, Cursor, Devin, VS Code, or another
 compatible MCP client can find and read indexed files — plus keep durable,
 human-editable session memory.
 
-![MoContext 26.0 local context server](media/mocontext-dark.png)
+![MoContext 26.1 local context server](media/mocontext-dark.png)
 
-The screenshot above is the MoContext 26.0 local context server. A workflow GIF
+The screenshot above is the MoContext 26.1 local context server. A workflow GIF
 is planned for a later release.
 
 ## Why
 
-- **The index already exists.** Mo-Search users have a continuously updated
+- **The index already exists.** Mo-Search provides the user with a fast
   full-text index of their entire machine. MoContext is a read-mostly MCP layer
   over it — no separate crawler, no re-indexing, no embedding pipeline.
 - **Beyond one repo.** Your agent can answer "where did I handle this before?"
@@ -37,25 +37,88 @@ is planned for a later release.
 ## Quick start
 
 1. **Install [Mo-Search](https://www.meauxsoft.com)** (Windows 10/11).
-   MoContext is currently included in the same installer and starts
-   automatically.
+   MoContext is included in the same installer. Tick its box on the installer's
+   finish page, or turn it on in Mo-Search's settings, then finish its short
+   setup.
 2. **Connect your client** to `http://127.0.0.1:43210/mcp`:
 
-**Codex**
+The [guided setup helper](https://www.meauxsoft.com/MoContext.html#connect)
+lets you select your editor or assistant and shows the matching steps. Use
+Reset there to configure another client. The examples below also work directly.
+
+MoContext must be running on the same Windows PC as your client. The extension
+setup paths below need neither Node.js nor a separately installed client CLI.
+
+**Codex extension for VS Code**
+
+1. Open the Codex panel's gear menu, then **Codex Settings > Open config.toml**.
+   This opens your user configuration (`%USERPROFILE%\.codex\config.toml`
+   on Windows).
+2. Add the following section, preserving existing settings. If a
+   `[mcp_servers.mocontext]` section already exists, update it instead of
+   adding a duplicate:
+
+```toml
+[mcp_servers.mocontext]
+url = "http://127.0.0.1:43210/mcp"
+```
+
+3. Save, run **Developer: Reload Window** from the VS Code Command Palette
+   (`Ctrl+Shift+P`), and start a new Codex conversation.
+4. Ask: **Use MoContext to get the server summary.**
+
+[Official Codex configuration instructions](https://learn.chatgpt.com/docs/config-file/config-basic)
+and [MCP documentation](https://learn.chatgpt.com/docs/extend/mcp).
+
+If you already have the **Codex CLI** installed, you can use this alternative:
 
 ```
 codex mcp add mocontext --url http://127.0.0.1:43210/mcp
 ```
 
-[Official Codex MCP documentation](https://developers.openai.com/codex/concepts/customization#mcp)
+**Claude Code extension for VS Code**
 
-**Claude Code**
+In extension version **2.1.261 or later**, type `/mcp` in the Claude chat
+panel, choose to add a server, and enter:
+
+- Name: `mocontext`
+- Transport: HTTP
+- URL: `http://127.0.0.1:43210/mcp`
+- Scope: user, to make it available across your projects on this PC
+
+Save, then ask: **Use MoContext to get the server summary.** The extension
+bundles the runtime it needs; a separate `claude` terminal command is optional.
+
+For a manual project setup, including older extensions, create `.mcp.json`
+in the root of the project folder open in VS Code. If the file already exists,
+merge the `mocontext` entry into its existing `mcpServers` object:
+
+```json
+{
+  "mcpServers": {
+    "mocontext": {
+      "type": "http",
+      "url": "http://127.0.0.1:43210/mcp"
+    }
+  }
+}
+```
+
+Save, run **Developer: Reload Window**, start a new Claude conversation, and
+approve the project server when prompted. Use `/mcp` to check its connection,
+then ask for the server summary. This file configures this project; repeat in
+other projects if needed. Claude Code uses `.mcp.json` at the project root,
+whereas VS Code's Copilot integration uses `.vscode/mcp.json`.
+
+[Official Claude Code extension instructions](https://code.claude.com/docs/en/vs-code#connect-to-external-tools-with-mcp)
+and [MCP configuration and scopes](https://code.claude.com/docs/en/mcp).
+
+If you already have the **Claude Code CLI** installed, you can use this
+alternative (user scope makes it available across projects):
 
 ```
-claude mcp add --transport http mocontext http://127.0.0.1:43210/mcp
+claude mcp add --transport http --scope user mocontext http://127.0.0.1:43210/mcp
 ```
-
-[Official Claude Code MCP documentation](https://docs.anthropic.com/en/docs/claude-code/mcp)
 
 **Cursor** (`~/.cursor/mcp.json` or `.cursor/mcp.json` in a project)
 
@@ -63,9 +126,9 @@ claude mcp add --transport http mocontext http://127.0.0.1:43210/mcp
 { "mcpServers": { "mocontext": { "url": "http://127.0.0.1:43210/mcp" } } }
 ```
 
-[Official Cursor MCP documentation](https://docs.cursor.com/context/model-context-protocol)
+[Official Cursor MCP documentation](https://cursor.com/docs/context/mcp)
 
-**VS Code** (`.vscode/mcp.json`)
+**GitHub Copilot in VS Code** (`.vscode/mcp.json`)
 
 ```json
 { "servers": { "mocontext": { "type": "http", "url": "http://127.0.0.1:43210/mcp" } } }
@@ -73,13 +136,14 @@ claude mcp add --transport http mocontext http://127.0.0.1:43210/mcp
 
 [Official VS Code MCP configuration reference](https://code.visualstudio.com/docs/agents/reference/mcp-configuration)
 
-**Windsurf** (`~/.codeium/windsurf/mcp_config.json`)
+**Devin Desktop** (`%APPDATA%\devin\mcp_config.json`)
 
 ```json
-{ "mcpServers": { "mocontext": { "serverUrl": "http://127.0.0.1:43210/mcp" } } }
+{ "mcpServers": { "mocontext": { "url": "http://127.0.0.1:43210/mcp" } } }
 ```
 
-[Official Windsurf MCP documentation](https://docs.windsurf.com/windsurf/cascade/mcp)
+[Official Devin Desktop MCP documentation](https://docs.devin.ai/desktop/cascade/mcp)
+and [configuration format](https://docs.devin.ai/cli/extensibility/mcp/configuration.md).
 
 These examples follow the current client configuration formats. Client
 features and configuration locations can change, so also consult the client's
@@ -90,6 +154,16 @@ supported local Desktop extension is a separate future task.
 3. **Try it** — ask your agent:
 
 > Use MoContext to find where I configured SMTP settings, anywhere on this machine.
+
+## Choose what your AI can reach
+
+MoContext Settings has two access profiles, so you can limit one AI to a folder
+while another sees your whole index:
+
+- **Folder:** when a folder is set, the address above is limited to that folder.
+- **Whole index:** uses the other address, shown only in MoContext Settings.
+
+Session memory and activity stay available on both.
 
 ## The tools
 
@@ -186,10 +260,9 @@ client/model stack that runs locally. See [PRIVACY.md](PRIVACY.md).
 
 The documentation in this repository is licensed [CC BY 4.0](LICENSE.md).
 Mo-Search and MoContext are proprietary software. MoContext is currently
-included with Mo-Search at no additional charge; see the current product page
+included with Mo-Search; see the current product page
 and [LICENSE.md](LICENSE.md) for availability and terms. The Mo-Search license
-is $50 for 365 days. MoVault is coming soon and is not a download from this
-repository.
+is $50 for 365 days and currently covers Mo-Search, MoContext and MoVault.
 
 ---
 

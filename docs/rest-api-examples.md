@@ -41,7 +41,7 @@ Invoke-RestMethod -Method Post http://127.0.0.1:43210/v1/context/evidence-pack `
   -ContentType 'application/json' `
   -Body (@{
     query     = 'session token validation'
-    mode      = 'keyword'   # keyword | phrase | all
+    mode      = 'all'       # all (default) | any | phrase
     max_files = 5
   } | ConvertTo-Json)
 ```

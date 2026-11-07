@@ -32,7 +32,7 @@ If the client exposes MoContext resources, useful entry points are:
 - `mocontext://recent-activity` - recent continuity notes with default limits.
 - `mocontext://docs/ai-usage` - this installed AI usage guide.
 - `mocontext://docs/human-prompt` - the human-facing session starter prompt.
-- `mocontext://docs/human` - human guide with copyable custom-instructions/session prompts and a technical appendix.
+- `mocontext://docs/human` - the human guide (MoContext 26.0 installs it in full; from 26.1 it is a short pointer to https://www.meauxsoft.com/MoContext_Human.html). The copyable prompt is `mocontext://docs/human-prompt`.
 - `mocontext://memory/readme` - guidance for durable MoContext memory files.
 
 If the client exposes only tools, `get_server_summary` plus `get_usage_guide` give the same high-level orientation.
@@ -128,16 +128,25 @@ Use `get_evidence_pack`. This is the primary retrieval tool - call it whenever y
 
 **Key parameters:**
 - **`query`** (required) - search terms.
-- **`mode`** - `"keyword"` (default, OR), `"all"` (AND), or `"phrase"` (literal match).
+- **`mode`** - `"keyword"` (any word), `"all"` (every word), or `"phrase"` (literal match). These three work on every MoContext version. From 26.1, `"any"` is the new name for `"keyword"` (both are accepted) and the default changes from `keyword` to `all`, so pass `mode` explicitly when it matters.
 - **`working_dir`** - your current working directory (absolute path). Recommended on every retrieval call; results are scoped to files under it and the response echoes `scope_applied`. Omit it to search all indexed roots - do this when scoped results are empty or the user asks about files outside the project. Also supported by `find_files`.
 - **`path_filter`** - substring filter on file paths (e.g. `"mobase"`).
 - **`filename`** - substring filter on filenames (e.g. `".cpp"` or `"Program"`).
 - **`max_files`**, **`max_windows_per_file`**, **`context_lines`** - budget controls.
 
 **Search mode guidance:**
-- **`keyword`** - almost always the right starting point. OR semantics across terms.
-- **`all`** - every term must appear in the same file. Very restrictive. Use only when you know several identifiers co-occur.
-- **`phrase`** - literal string match. Best for error messages or exact fragments. Note: the tokenizer splits on dots and hyphens, so `MoContext.Server.exe` becomes three tokens. Use `keyword` for dotted identifiers.
+- **`keyword`** (26.1 name: `any`) - at least one word. Use it for breadth or alternative spellings; it is the safe starting point on any version. From 26.1, files containing more of the words rank first.
+- **`all`** - every word must appear in the same file, like a MoSearch search. From 26.1 it is the default, and if no file has them all, MoContext falls back to `any` once and says so: `mode_applied: "any"` and `fallback: "no_file_has_all_words"`. On 26.0 an `all` search with no match returns nothing; retry with `keyword`.
+- **`phrase`** - literal string match. Best for error messages or exact fragments. The phrase's words narrow the candidates first, then each file's text is checked for the literal phrase.
+
+**How query words are broken.** MoContext looks up the same words MoSearch writes to its index:
+- A dotted name is indexed whole and by its parts: `MoContext.Server.exe` gives `mocontext.server.exe`, `mocontext`, `server`, and `exe`. Searching the whole name or any part finds the file, in every mode.
+- Letters, digits, `.`, `_`, `'`, and `@` are word characters; anything else (including hyphens and non-ASCII characters) separates words. `snake_case_name` and `user@domain.com` are words (`user@domain.com` is also indexed as `user`, `domain`, and `com`).
+- Periods at the start or end are trimmed (`word.` is `word`, `.net` is `net`). Two or more periods in a row split the word into its parts (`word1..word2` is `word1` and `word2`).
+- `don't` is one word (also indexed as `don`); quotes around a word are trimmed.
+- From 26.1, noise words (`the`, `then`, `and`, `with`, ...) and 1-character words are never indexed, so they are not searched. The response lists them in `ignored_words` (for example `"then (noise word)"`; null when none). In `all` or `any` mode, a query made only of such words is rejected with an error that names them.
+
+From 26.1, each result also carries `terms_matched` and `terms_total` (how many of the query's distinct words that file contains, out of how many the query has; null for `phrase`). `total_files_matched` counts the index matches before disk checks (26.0 counts the files that qualified after filtering).
 
 **Best practice:** Pass `working_dir`, then combine `path_filter` and `filename` to narrow further. Without scoping, common terms match across the entire indexed codebase.
 
@@ -162,7 +171,7 @@ Use `get_evidence_pack`. This is the primary retrieval tool - call it whenever y
 
 Use `find_files` - the one tool for file discovery. Its behavior follows from the parameters you pass:
 
-- **With `query`** - ranked keyword/phrase search against the MoSearch index. Returns file paths with rank; no snippets. Good for choosing which file to drill into before `get_evidence_pack` or `read_file`.
+- **With `query`** - ranked search against the MoSearch index, with the same `mode` values as `get_evidence_pack` (from 26.1 also the same default, fallback, and `terms_matched`). Returns file paths with rank; no snippets. `total_files_matched` is the index match count inside the access profile and `working_dir` (the same figure evidence packs use), not a cap of 250 candidates. Good for choosing which file to drill into before `get_evidence_pack` or `read_file`.
 - **Without `query`** - lists recently indexed files in index-recency order. Good for session-start project discovery; no keywords required.
 - **With `hot_hours` and/or `warm_days` (and no `query`)** - returns the `UriHistory` working-set grouping instead: `hot` (recently indexed within `hot_hours`, default 24) and `warm` (within `warm_days`, default 7 days, deduped against hot). Entries carry path, change count, first/last indexed time, size, and mod generation - metadata only, never file contents.
 
@@ -355,8 +364,8 @@ You can request fewer than the defaults but not more.
 
 - Cannot read PDF, DOCX, XLS, or other binary formats - returns `content_unavailable: "unsupported_loader"`.
 - Certain file formats are indexed by path only - returns `content_unavailable: "path_only"`.
-- No semantic / embedding-based search - retrieval is keyword/phrase/AND against the MoSearch word index.
-- Tokenizer splits on dots - `MoContext.Server.exe` is three words. Use `keyword` mode for dotted identifiers.
+- No semantic / embedding-based search - retrieval is any-word / all-words / phrase against the MoSearch word index.
+- Words are broken as MoSearch indexes them (see "How query words are broken"); there are no wildcards or search operators.
 - May only search files indexed by MoSearch.
 - `LoadContext <keyword>` depends on MoSearch indexing the digest Markdown; immediately saved or hand-edited digests may need a brief AutoIndexer moment before keyword search sees them.
 - `LoadContext` responses may be truncated by `max_chars`; use omitted counts to decide whether to narrow by keyword or fetch a specific digest by id.

@@ -5,8 +5,8 @@
 - **Is MoContext running?** Look for the MoContext tray icon, or open
   <http://127.0.0.1:43210/v1/health> in a browser. A JSON response means the
   server is up.
-- **Not running?** Start Mo-Search (MoContext starts with it), or launch
-  `MoContext.Server.exe` from the Mo-Search install folder
+- **Not running?** Turn it on in Mo-Search's settings, start MoContext from the
+  Start Menu, or launch `MoContext.Server.exe` from the Mo-Search install folder
   (`...\Meauxsoft\Mo-Search...\MoContext\`).
 - **Port conflict**: MoContext uses port `43210` on `127.0.0.1`. If another
   process holds it, `/v1/health` will fail; free the port and restart.
@@ -17,6 +17,8 @@
   Mo-Search and check which folders/drives are included in the index.
 - A brand-new install may still be building its first index — check
   `get_health` → `index.newest_indexed_at` for recency.
+- If a folder is set in MoContext Settings, the normal address searches only that
+  folder. Use the Whole index address to search everything.
 - Scoped searches (`working_dir`) return nothing if the directory isn't under
   an indexed root; retry without `working_dir` before concluding a file
   doesn't exist.
@@ -40,7 +42,8 @@ indexing). When the flag is `true`, have the agent re-read the file with
 
 One of the two local databases is unreachable. `get_diagnostics` reports the
 exact paths. Most common cause: Mo-Search's index database is mid-rebuild —
-wait for indexing to finish.
+wait for indexing to finish. Until then, index searches answer "temporarily
+unavailable", while session memory and activity keep working.
 
 ## Still stuck?
 

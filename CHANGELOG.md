@@ -1,8 +1,18 @@
 ﻿# MoContext release history
 
-MoContext ships inside the Mo-Search installer and follows its release cycle, so these version numbers are Mo-Search versions. Only MoContext changes are listed; see the [Mo-Search changelog](https://github.com/Meauxsoft/mo-search/blob/main/CHANGELOG.md) for everything else. Documented through **26.0**.
+MoContext ships inside the Mo-Search installer and follows its release cycle, so these version numbers are Mo-Search versions. Only MoContext changes are listed; see the [Mo-Search changelog](https://github.com/Meauxsoft/mo-search/blob/main/CHANGELOG.md) for everything else. Documented through **26.1**.
 
 Generated from the Meauxsoft release history by `build-changelog.ps1`. Do not edit by hand.
+
+## 26.1 — 2026, Nov 7
+
+_MoVault arrives, better-ranked search, and folder limits for MoContext_
+
+- MoContext: New privacy controls limit which part of your index an AI can search and read. You can limit one AI to a folder while another sees your whole index.
+- MoContext: Searches are much faster on large indexes. Broad searches that could take tens of seconds now usually answer in under a second.
+- MoContext: Searches now default to all words and fall back to any word when no file has them all. Queries break words the way Mo-Search indexes them, and ignored words are reported.
+- MoContext: Is now available even when your search index is being built. Context requests are still serviced, even when your search indexing is unavailable due to building.
+- MoContext and MoVault: Improved UX, theming and layout.
 
 ## 26.0 — 2026, Sep 21
 
